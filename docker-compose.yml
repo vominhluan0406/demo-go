@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  # --- Backend Go ---
+  backend:
+    build: .             # Dấu chấm nghĩa là build từ thư mục hiện tại
+    container_name: go_server
+    ports:
+      - "8080:8080"      # Map cổng ra ngoài
+    environment:
+      - DB_HOST=postgres
+      - DB_USER=admin
+      - DB_PASSWORD=MatKhauSieuManh123
+      - DB_NAME=app_db
+      - DB_PORT=5432
+    depends_on:
+      - postgres
+    restart: always
+    mem_limit: 150m      # Giới hạn RAM cho Go (Quan trọng cho máy 1GB)
+
+  # --- Database ---
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: MatKhauSieuManh123
+      POSTGRES_DB: app_db
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    mem_limit: 512m      # Giới hạn RAM cho DB
+    restart: always
+
+volumes:
+  pg_data:
