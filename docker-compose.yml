@@ -3,10 +3,10 @@ version: '3.8'
 services:
   # --- Backend Go ---
   backend:
-    build: .             # Dấu chấm nghĩa là build từ thư mục hiện tại
+    build: .
     container_name: go_server
     ports:
-      - "8080:8080"      # Map cổng ra ngoài
+      - "8080:8080"
     environment:
       - DB_HOST=postgres
       - DB_USER=admin
@@ -16,9 +16,9 @@ services:
     depends_on:
       - postgres
     restart: always
-    mem_limit: 150m      # Giới hạn RAM cho Go (Quan trọng cho máy 1GB)
+    mem_limit: 150m
 
-  # --- Database ---
+  # --- Database Postgres ---
   postgres:
     image: postgres:16-alpine
     container_name: postgres_db
@@ -27,11 +27,15 @@ services:
       POSTGRES_PASSWORD: MatKhauSieuManh123
       POSTGRES_DB: app_db
     volumes:
+      # Map volume bên ngoài vào trong container
       - pg_data:/var/lib/postgresql/data
-    mem_limit: 512m      # Giới hạn RAM cho DB
+    ports:
+      - "5432:5432"  # Mở cổng này thì netstat mới thấy
+    mem_limit: 512m
     restart: always
 
+# --- SỬA LỖI VOLUME TẠI ĐÂY ---
 volumes:
-  pg_data: 
+  pg_data:
     external: true
-    name: pg_data  
+    name: pg_data  # Tên volume cũ bạn đã tạo bằng lệnh docker run
