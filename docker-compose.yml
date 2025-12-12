@@ -1,41 +1,23 @@
 version: '3.8'
 
 services:
-  # --- Backend Go ---
   backend:
     build: .
     container_name: go_server
+    restart: always
     ports:
       - "8080:8080"
     environment:
-      - DB_HOST=postgres
+      # Lưu ý: DB_HOST phải trùng với container_name ở file kia
+      - DB_HOST=postgres_db 
       - DB_USER=admin
       - DB_PASSWORD=MatKhauSieuManh123
       - DB_NAME=app_db
       - DB_PORT=5432
-    depends_on:
-      - postgres
-    restart: always
     mem_limit: 150m
+    networks:
+      - app_network  # <--- Gắn vào cùng mạng với DB
 
-  # --- Database Postgres ---
-  postgres:
-    image: postgres:16-alpine
-    container_name: postgres_db
-    environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: MatKhauSieuManh123
-      POSTGRES_DB: app_db
-    volumes:
-      # Map volume bên ngoài vào trong container
-      - pg_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"  # Mở cổng này thì netstat mới thấy
-    mem_limit: 512m
-    restart: always
-
-# --- SỬA LỖI VOLUME TẠI ĐÂY ---
-volumes:
-  pg_data:
-    external: true
-    name: pg_data  # Tên volume cũ bạn đã tạo bằng lệnh docker run
+networks:
+  app_network:
+    external: true   # <--- Dùng chung mạng
