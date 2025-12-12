@@ -32,4 +32,6 @@ services:
     restart: always
 
 volumes:
-  pg_data: pg_data
+  pg_data: 
+    external: true
+    name: pg_data  
